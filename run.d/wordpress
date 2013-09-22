@@ -1,0 +1,26 @@
+#!/usr/bin/php -q
+<?
+// Fetch the host list to check
+//
+$hosts = explode(' ', getenv('CHK_HOSTS'));
+if (implode($hosts)=='') die("No hosts to check.\n");
+
+// Retrieve current Wordpress version from http://api.wordpress.org/core/version-check/1.6/
+//
+$wp_api = unserialize(file_get_contents("http://api.wordpress.org/core/version-check/1.6/"));
+$wp_current = $wp_api['offers'][0]['current'];
+
+foreach($hosts as $host) {
+  $cmd = "ssh $host \"locate wp-includes/version.php | xargs grep -H 'wp_version ='\"";
+  exec($cmd, $results);
+  foreach($results as $instance) {
+    $parts = explode(':', $instance);
+    $location = substr($parts[0], 0, strlen($parts[0])-23);
+    $version = substr($parts[1], 15, 5);
+    if($version < $wp_current) echo "WARNING: Outdated Wordpress $version at $host:$location\n";
+  }
+  unset($results);
+
+}
+
+?>

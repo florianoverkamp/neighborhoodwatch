@@ -1,0 +1,63 @@
+#!/usr/bin/php -q
+<?
+// Fetch the host list to check
+//
+$hosts = explode(' ', getenv('CHK_HOSTS'));
+if (implode($hosts)=='') die("No hosts to check.\n");
+
+// Retrieve current Drupal version as documented at http://www.goldcoastmedia.co.uk/blog/drupal-versions-with-php
+//
+$latest = NULL;
+$url = 'http://updates.drupal.org/release-history/drupal/7.x';
+$context = stream_context_create(array(
+  'http' => array(
+  'method' => 'GET',
+  'timeout' => 10,
+  ),
+));
+$data = file_get_contents($url, FALSE, $context);
+if($data)
+  $feed = simplexml_load_string($data);
+if($feed && $feed instanceof SimpleXMLElement) {
+  // Check the property exists and assign
+  if( isset($feed->releases->release[0]->version) ) {
+    $dr_current = $feed->releases->release[0]->version;
+    // return $latest;
+  }
+}
+
+// For Drupal 4.x - 6.x
+foreach($hosts as $host) {
+  $cmd = "ssh $host \"locate modules/system/system.module | xargs grep -H 'VERSION'\"";
+  exec($cmd, $results);
+
+  foreach($results as $instance) {
+    $parts = explode(':', $instance);
+    $location = substr($parts[0], 0, strlen($parts[0])-28);
+    if(substr($parts[1], 0, 16) == "define('VERSION'") {
+      $version = substr($parts[1], 19, strpos($parts[1], "'", 19)-19);
+      if($version < $dr_current) echo "WARNING: Outdated Drupal $version at $host:$location\n";
+    }
+  }
+  unset($results);
+
+}
+
+// For Drupal 7.x 
+foreach($hosts as $host) {
+  $cmd = "ssh $host \"locate includes/bootstrap.inc | xargs grep -H 'VERSION'\"";
+  exec($cmd, $results);
+
+  foreach($results as $instance) {
+    $parts = explode(':', $instance);
+    $location = substr($parts[0], 0, strlen($parts[0])-23);
+    if(substr($parts[1], 0, 16) == "define('VERSION'") {
+      $version = substr($parts[1], 19, strpos($parts[1], "'", 19)-19);
+      if($version < $dr_current) echo "WARNING: Outdated Drupal $version at $host:$location\n";
+    }
+  }
+  unset($results);
+
+}
+
+?>

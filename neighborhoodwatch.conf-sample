@@ -1,0 +1,14 @@
+#################
+#
+# Settings (will be sourced from main script)
+#
+
+# Hosts that need to be checked (these need to be an ssh login with keys, not passwords, hosts space separated)
+#
+export CHK_HOSTS="host1 host2 host3"
+
+# Path configuration
+#
+export RUN_PATH="${SCRIPT_PATH}/run.d"
+export TMP_PATH="${SCRIPT_PATH}/tmp"
+
