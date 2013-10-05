@@ -2,8 +2,12 @@
 <?
 // Fetch the host list to check
 //
-$hosts = explode(' ', getenv('CHK_HOSTS'));
-if (implode($hosts)=='') die("No hosts to check.\n");
+if( getenv('CHK_HOSTS') == null ) {
+	$hosts = null;
+}else {
+	$hosts = explode(' ', getenv('CHK_HOSTS'));
+	if (implode($hosts)=='') die("No hosts to check.\n");
+}
 
 // Retrieve current Drupal version as documented at http://www.goldcoastmedia.co.uk/blog/drupal-versions-with-php
 //
