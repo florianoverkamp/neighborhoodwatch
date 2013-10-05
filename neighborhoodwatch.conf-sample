@@ -13,3 +13,6 @@ export CHK_HOSTS="host1 host2 host3"
 export RUN_PATH="${SCRIPT_PATH}/run.d"
 export TMP_PATH="${SCRIPT_PATH}/tmp"
 
+# Options
+export VERBOSE="1"
+

@@ -1,18 +1,12 @@
 #!/usr/bin/php -q
 <?
-// Fetch the host list to check
-//
-if( getenv('CHK_HOSTS') == null ) {
-	$hosts = null;
-}else {
-	$hosts = explode(' ', getenv('CHK_HOSTS'));
-	if (implode($hosts)=='') die("No hosts to check.\n");
-}
+require_once("toolkit.php");
 
 // Retrieve current Wordpress version from http://api.wordpress.org/core/version-check/1.6/
 //
 $wp_api = unserialize(file_get_contents("http://api.wordpress.org/core/version-check/1.6/"));
 $wp_current = $wp_api['offers'][0]['current'];
+verbose("Current Wordpress version: $wp_current", 1);
 
 checkHost(null, $wp_current);
 if( $hosts != null ) {

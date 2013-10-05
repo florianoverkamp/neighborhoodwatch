@@ -1,0 +1,39 @@
+#!/usr/bin/php -q
+<?
+require_once("toolkit.php");
+
+$cake_api = file_get_contents("https://github.com/cakephp/cakephp/tags");
+if( preg_match("/\<span class=\"tag\-name\"\>([0-9\.]+)\<\/span\>/", $cake_api, $matches) ) {
+  $cake_current = $matches[1];
+  verbose(Current CakePHP version: $cake_current", 1);
+}else {
+  die("Unable to determine current CakePHP version, exiting\n");
+}
+
+checkHost(null, $cake_current);
+if( $hosts != null ) {
+  foreach($hosts as $host) {
+    checkHost($host, $cake_current);
+  }
+}
+
+function checkHost($host, $cake_current) {
+	$cmd = "locate -i Cake/VERSION.txt | xargs grep -H -v \"//\" | grep -v \"ake/VERSION.txt:$\"";
+	$hostidentifier = "localhost:";
+	if( $host != null ) {
+		$cmd = "ssh $host \"" . $cmd . "\"";
+		$hostidentifier = $host . ":";
+	}
+	exec($cmd, $results);
+	foreach($results as $instance) {
+		$parts = explode(':', $instance);
+		$location = substr($parts[0], 0, strlen($parts[0])-16);
+		$version = $parts[1];
+		if($version < $cake_current) {
+			echo "WARNING: Outdated CakePHP $version at $hostidentifier$location\n";
+		}
+	}
+	unset($results);
+}
+
+?>

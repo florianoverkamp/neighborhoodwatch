@@ -1,0 +1,40 @@
+#!/usr/bin/php -q
+<?
+require_once("toolkit.php");
+
+$pma_api = file_get_contents("http://www.phpmyadmin.net/home_page/downloads.php");
+if( preg_match("/>phpMyAdmin\-([0-9\.]+)\-all\-languages\.tar\.gz</", $pma_api, $matches) ) {
+  $pma_current = $matches[1];
+  verbose("Current PHPMyAdmin version: $pma_current", 1);
+} else {
+  die("Unable to determine current PHPMyAdmin version, exiting\n");
+}
+
+checkHost(null, $pma_current);
+if($hosts != null) {
+	foreach($hosts as $host) {
+		checkHost($host, $pma_current);
+	}
+}
+
+function checkHost($host, $pma_current) {
+	$cmd = "locate libraries/Config.class.php | xargs grep -H 'PMA_VERSION' | grep set";
+	$hostidentifier = "localhost:";
+	if( $host != null ) {
+		$cmd = "ssh $host \"" . $cmd . "\"";
+		$hostidentifier = $host . ":";
+	}
+	exec($cmd, $results);
+	foreach($results as $instance) {
+		$parts = explode(':', $instance);
+		$location = substr($parts[0], 0, strlen($parts[0])-26);
+		preg_match("/->set\('PMA_VERSION', '([0-9\.a-z]+)'\);/", $parts[1], $matches);
+		$version = $matches[1];
+		if($version < $pma_current) {
+			echo "WARNING: Outdated PHPMyAdmin $version at $hostidentifier$location\n";
+		}
+	}
+	unset($results);
+}
+
+?>
