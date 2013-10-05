@@ -5,7 +5,7 @@ require_once("toolkit.php");
 $cake_api = file_get_contents("https://github.com/cakephp/cakephp/tags");
 if( preg_match("/\<span class=\"tag\-name\"\>([0-9\.]+)\<\/span\>/", $cake_api, $matches) ) {
   $cake_current = $matches[1];
-  verbose(Current CakePHP version: $cake_current", 1);
+  verbose("Current CakePHP version: $cake_current", 1);
 }else {
   die("Unable to determine current CakePHP version, exiting\n");
 }
