@@ -32,9 +32,8 @@ if($feed && $feed instanceof SimpleXMLElement) {
 
 // Start checking hosts
 //
-if( $hosts == null ) {
-  checkHost(null, $dr_current);
-} else {
+checkHost(null, $dr_current);
+if( $hosts != null ) {
   foreach($hosts as $host) {
     checkHost($host, $dr_current);
   }
@@ -43,7 +42,7 @@ if( $hosts == null ) {
 function checkHost($host, $dr_current) {
   // For Drupal 4.x - 6.x
   $cmd = "locate modules/system/system.module | xargs grep -H 'VERSION'";
-  $hostidentifier = "";
+  $hostidentifier = "localhost:";
   if( $host != null ) {
  	$cmd = "ssh $host \"" . $cmd . "\"";
 	$hostidentifier = $host . ":";
