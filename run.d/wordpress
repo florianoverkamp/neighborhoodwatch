@@ -29,7 +29,9 @@ function checkHost($host, $wp_current) {
     preg_match("/wp_version = '([0-9]+\.[0-9]+(\.[0-9]+)?)';/", $parts[1], $matches);
     $version = $matches[1];
     if($version < $wp_current) {
-	echo "WARNING: Outdated Wordpress $version at $hostidentifier$location\n";
+	verbose("WARNING: Outdated Wordpress $version at $hostidentifier$location", 0);
+    } else {
+	verbose("Recent Wordpress $version at $hostidentifier$location", 2);
     }
   }
   unset($results);

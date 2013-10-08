@@ -30,7 +30,9 @@ function checkHost($host, $cake_current) {
 		$location = substr($parts[0], 0, strlen($parts[0])-16);
 		$version = $parts[1];
 		if($version < $cake_current) {
-			echo "WARNING: Outdated CakePHP $version at $hostidentifier$location\n";
+			verbose("WARNING: Outdated CakePHP $version at $hostidentifier$location", 0);
+		} else {
+			verbose("Recent CakePHP $version at $hostidentifier$location", 2);
 		}
 	}
 	unset($results);
