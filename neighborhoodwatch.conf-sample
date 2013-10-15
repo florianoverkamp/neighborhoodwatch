@@ -13,6 +13,9 @@ export CHK_HOSTS="host1 host2 host3"
 export RUN_PATH="${SCRIPT_PATH}/run.d"
 export TMP_PATH="${SCRIPT_PATH}/tmp"
 
+# Optional PHP.ini
+#export PHPRC="/etc/php/cli-php5.3/nosafemode/php.ini"
+
 # Options
 export VERBOSE="1"
 
