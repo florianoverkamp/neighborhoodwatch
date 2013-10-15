@@ -1,0 +1,56 @@
+#!/usr/bin/php -q
+<?php
+require_once("toolkit.php");
+
+$mw_api = file_get_contents("http://www.mediawiki.org/wiki/Download");
+if( preg_match_all("/http:\/\/download\.wikimedia\.org\/mediawiki\/.*mediawiki-(.*)\.tar\.gz/", $mw_api, $matches) ) {
+	$mw_current = array();
+	foreach($matches[1] as $version) {
+		$parts = explode(".", $version);
+		// Page says: MediaWiki <= 1.18.x support was discontinued
+		if( !in_array($version, $mw_current) && !($parts[0]==1 && $parts[1]<=18) ) {
+			$mw_current[$parts[0].".".$parts[1]] = $version;
+			verbose("Current stable MediaWiki version $parts[0].$parts[1]: $version", 1);
+		}
+	}
+}else {
+	die("Unable to determine current MediaWiki version, exiting\n");
+}
+
+checkHost(null, $mw_current);
+if( $hosts != null ) {
+  foreach($hosts as $host) {
+    checkHost($host, $mw_current);
+  }
+}
+
+function checkHost($host, $mw_current) {
+  $cmd = "locate includes/DefaultSettings.php | xargs grep -H 'wgVersion'";
+  $hostidentifier = "localhost:";
+  if( $host != null ) {
+ 	$cmd = "ssh $host \"" . $cmd . "\"";
+	$hostidentifier = $host . ":";
+  }
+  exec($cmd, $results);
+
+  foreach($results as $instance) {
+    $parts = explode(':', $instance);
+    $location = substr($parts[0], 0, strlen($parts[0])-28);
+    if( preg_match("/wgVersion\s*=\s*'([0-9\.]+)';/", $parts[1], $matches)) {
+      $version = $matches[1];
+      $version_parts = explode(".", $version);
+      $version_major = $version_parts[0] . "." . $version_parts[1];
+      if( !array_key_exists($version_major, $mw_current) || $version < $mw_current[$version_major] ) {
+      	verbose("WARNING: Outdated MediaWiki $version at $hostidentifier$location", 0);
+      }else {
+      	verbose("Recent MediaWiki $version at $hostidentifier$location", 2);
+      }
+    }else {
+      verbose("WARNING: No version found for MediaWiki at $hostidentifier$location", 0);
+    }
+  }
+  unset($results);
+}
+
+?>
+
