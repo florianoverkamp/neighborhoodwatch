@@ -15,12 +15,11 @@ $context = stream_context_create(array(
 $data = file_get_contents($url, FALSE, $context);
 if($data)
   $feed = simplexml_load_string($data);
-if($feed && $feed instanceof SimpleXMLElement) {
-  // Check the property exists and assign
-  if( isset($feed->releases->release[0]->version) ) {
-    $dr_current = $feed->releases->release[0]->version;
-    // return $latest;
-  }
+if($feed && $feed instanceof SimpleXMLElement && isset($feed->releases->release[0]->version)) {
+  $dr_current = $feed->releases->release[0]->version;
+  verbose("Current Drupal version: $dr_current", 1);
+} else {
+  die("Unable to determine current Drupal version, exiting\n");
 }
 
 verbose("Current Drupal version: $dr_current", 1);
