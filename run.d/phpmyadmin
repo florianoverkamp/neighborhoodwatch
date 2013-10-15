@@ -2,9 +2,9 @@
 <?php
 require_once("toolkit.php");
 
-$pma_api = file_get_contents("http://www.phpmyadmin.net/home_page/downloads.php");
-if( preg_match("/>phpMyAdmin\-([0-9\.]+)\-all\-languages\.tar\.gz</", $pma_api, $matches) ) {
-  $pma_current = $matches[1];
+$pma_api = json_decode(file_get_contents("http://www.phpmyadmin.net/home_page/version.json"));
+if(is_object($pma_api) && strlen($pma_api->version)>0) {
+  $pma_current = $pma_api->version;
   verbose("Current PHPMyAdmin version: $pma_current", 1);
 } else {
   die("Unable to determine current PHPMyAdmin version, exiting\n");
