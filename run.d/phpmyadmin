@@ -1,5 +1,5 @@
 #!/usr/bin/php -q
-<?
+<?php
 require_once("toolkit.php");
 
 $pma_api = file_get_contents("http://www.phpmyadmin.net/home_page/downloads.php");

@@ -1,5 +1,5 @@
 #!/usr/bin/php -q
-<?
+<?php
 require_once("toolkit.php");
 
 // Retrieve current Wordpress version from http://api.wordpress.org/core/version-check/1.6/

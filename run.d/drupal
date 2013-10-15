@@ -1,5 +1,5 @@
 #!/usr/bin/php -q
-<?
+<?php
 require_once("toolkit.php");
 
 // Retrieve current Drupal version as documented at http://www.goldcoastmedia.co.uk/blog/drupal-versions-with-php

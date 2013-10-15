@@ -1,4 +1,4 @@
-<?
+<?php
 // Generic tasks to read shell/environment settings into PHP
 //
 
