@@ -1,0 +1,55 @@
+#!/usr/bin/php -q
+<?php
+require_once("toolkit.php");
+
+$mg_api = file_get_contents("http://galleryproject.org/versioncheck/gallery3");
+if( preg_match_all("/release_version=([0-9\.]+)/", $mg_api, $matches) ) {
+	$mg_current = array();
+	foreach($matches[1] as $version) {
+		$parts = explode(".", $version);
+		if( !in_array($version, $mg_current) && !($parts[0]==1 && $parts[1]<=1) ) {
+			$mg_current[$parts[0]] = $version;
+			verbose("Current stable Menalto Gallery$parts[0]: $version", 1);
+		}
+	}
+} else {
+	die("Unable to determine current Menalto Gallery version, exiting\n");
+}
+
+checkHost(null, $mg_current);
+if( $hosts != null ) {
+  foreach($hosts as $host) {
+    checkHost($host, $mg_current);
+  }
+}
+
+function checkHost($host, $mg_current) {
+  $cmd = "locate modules/gallery/helpers/gallery.php | xargs grep -H 'VERSION = '";
+  $hostidentifier = "localhost:";
+  if( $host != null ) {
+ 	$cmd = "ssh $host \"" . $cmd . "\"";
+	$hostidentifier = $host . ":";
+  }
+  exec($cmd, $results);
+
+  foreach($results as $instance) {
+    $parts = explode(':', $instance);
+    $location = substr($parts[0], 0, strlen($parts[0])-35);
+    if( preg_match("/VERSION = \"([0-9\.]+)\"/", $parts[1], $matches)) {
+      $version = $matches[1];
+      $version_parts = explode(".", $version);
+      $version_major = $version_parts[0];
+
+      if( !array_key_exists($version_major, $mg_current) || $version < $mg_current[$version_major] ) {
+      	verbose("WARNING: Outdated Menalto Gallery $version at $hostidentifier$location", 0);
+      }else {
+      	verbose("Recent Menalto Gallery $version at $hostidentifier$location", 2);
+      }
+    }else {
+      verbose("WARNING: No version found for Menalto Gallery at $hostidentifier$location", 0);
+    }
+  }
+  unset($results);
+}
+
+?>
