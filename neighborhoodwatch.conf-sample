@@ -19,3 +19,11 @@ export TMP_PATH="${SCRIPT_PATH}/tmp"
 # Options
 export VERBOSE="1"
 
+# Command to execute for every outdated installation. This will be called with the following parameters:
+# - package
+# - expected version
+# - found version
+# - path
+# Example: /usr/local/bin/notify-outdated.sh wordpress 3.7.1 3.6.0 localhost:/home/user/public_html/
+#export NOTIFY_SCRIPT="/usr/local/bin/notify-outdated.sh"
+

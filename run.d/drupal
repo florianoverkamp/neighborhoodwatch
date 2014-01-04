@@ -48,7 +48,12 @@ function checkHost($host, $dr_current) {
     $location = substr($parts[0], 0, strlen($parts[0])-28);
     if(substr($parts[1], 0, 16) == "define('VERSION'") {
       $version = substr($parts[1], 19, strpos($parts[1], "'", 19)-19);
-      if($version < $dr_current) echo "WARNING: Outdated Drupal $version at $hostidentifier$location\n";
+      if($version < $dr_current) {
+      	verbose("WARNING: Outdated Drupal $version at $hostidentifier$location", 0);
+	notifyScript("Drupal", $dr_current, $version, "$hostidentifier$location");
+      }else {
+        verbose("Recent Drupal $version at $host$location", 2);
+      }
     }
   }
   unset($results);
@@ -66,9 +71,10 @@ function checkHost($host, $dr_current) {
     if(substr($parts[1], 0, 16) == "define('VERSION'") {
       $version = substr($parts[1], 19, strpos($parts[1], "'", 19)-19);
       if($version < $dr_current) {
-	verbose("WARNING: Outdated Drupal $version at $host:$location", 0);
+	verbose("WARNING: Outdated Drupal $version at $host$location", 0);
+	notifyScript("Drupal", $dr_current, $version, "$hostidentifier$location");
       } else {
-	verbose("Recent Drupal $version at $host:$location", 2);
+	verbose("Recent Drupal $version at $host$location", 2);
       }
     }
   }

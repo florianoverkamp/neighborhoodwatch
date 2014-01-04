@@ -42,6 +42,7 @@ function checkHost($host, $mg_current) {
 
       if( !array_key_exists($version_major, $mg_current) || $version < $mg_current[$version_major] ) {
       	verbose("WARNING: Outdated Menalto Gallery $version at $hostidentifier$location", 0);
+	notifyScript("Menalto Gallery", $mg_current, $version, "$hostidentifier$location");
       }else {
       	verbose("Recent Menalto Gallery $version at $hostidentifier$location", 2);
       }

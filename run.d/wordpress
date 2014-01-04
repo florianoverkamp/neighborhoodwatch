@@ -34,6 +34,7 @@ function checkHost($host, $wp_current) {
     $version = $matches[1];
     if($version < $wp_current) {
 	verbose("WARNING: Outdated Wordpress $version at $hostidentifier$location", 0);
+	notifyScript("Wordpress", $wp_current, $version, "$hostidentifier$location");
     } else {
 	verbose("Recent Wordpress $version at $hostidentifier$location", 2);
     }

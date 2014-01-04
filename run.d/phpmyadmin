@@ -32,6 +32,7 @@ function checkHost($host, $pma_current) {
 		  $version = $matches[1];
 	  	  if($version < $pma_current) {
 			verbose("WARNING: Outdated PHPMyAdmin $version at $hostidentifier$location", 0);
+			notifyScript("PHPMyAdmin", $pma_current, $version, "$hostidentifier$location");
 		  } else {
 			verbose("Recent PHPMyAdmin $version at $hostidentifier$location", 2);
 		  }

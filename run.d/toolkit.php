@@ -23,4 +23,17 @@ function verbose($msg, $loglevel=0) {
   if($loglevel <= $verbose) echo $msg."\n";
 }
 
+// Notify script
+//
+function notifyScript($tool, $expectedVersion, $foundVersion, $path) {
+	if( getenv('NOTIFY_SCRIPT') != null ) {
+		$cmd = getenv('NOTIFY_SCRIPT') . " " . 
+			escapeshellarg($tool) . " " . 
+			escapeshellarg($expectedVersion) . " " . 
+			escapeshellarg($foundVersion) . " " .
+			escapeshellarg($path);
+		exec($cmd);
+	}
+}
+
 ?>
